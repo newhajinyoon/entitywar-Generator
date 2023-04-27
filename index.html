@@ -6,6 +6,10 @@
   </head>
   <body>
     <h1>엔티티워 엔티티 커맨드 생성기</h1>
+
+<label for="excel-input">엑셀로 넣기:</label>
+<input type="text" id="excel-input" name="excel-input" placeholder="엑셀에서 복사하세요. ID | 표시 이름 | 체력 | 공격력"><br><br>
+
     <label for="mob-name">몹 ID:</label>
     <input type="text" id="mob-name" name="mob-name" placeholder="zombie"><br><br>
     <label for="mob-cname">표시 이름:</label>
@@ -22,12 +26,44 @@
     <textarea id="command-2" rows="5" cols="50" readonly placeholder="커맨드 결과가 표시되는곳입니다"></textarea><br><br>
 
     <script>
+      function toggleInputs() {
+  const excelInput = document.getElementById("excel-input");
+  const inputs = document.querySelectorAll("input[type='text']");
+
+  if (excelInput.value) {
+    inputs.forEach((input) => {
+      document.getElementById("mob-name").disabled = true;
+      document.getElementById("mob-cname").disabled = true;
+      document.getElementById("mob-health").disabled = true;
+      document.getElementById("mob-attack").disabled = true;
+    });
+  } else {
+    inputs.forEach((input) => {
+      document.getElementById("mob-name").disabled = false;
+      document.getElementById("mob-cname").disabled = false;
+      document.getElementById("mob-health").disabled = false;
+      document.getElementById("mob-attack").disabled = false;
+    });
+  }
+}
+
+const excelInput = document.getElementById("excel-input");
+excelInput.addEventListener("input", toggleInputs);
       function generateCommands(player) {
-        // 1커맨드 생성
-        const mobName = document.getElementById("mob-name").value;
-        const mobAttack = document.getElementById("mob-attack").value;
-        const mobHealth = document.getElementById("mob-health").value;
-        const mobCName = document.getElementById("mob-cname").value;
+        // 엑셀로 넣기 입력값 파싱
+        const excelInput = document.getElementById("excel-input").value.trim();
+        let mobName = "";
+        let mobCName = "";
+        let mobHealth = "";
+        let mobAttack = "";
+        if (excelInput !== "") {
+          [mobName, mobCName, mobHealth, mobAttack] = excelInput.split("	");
+        } else {
+          mobName = document.getElementById("mob-name").value;
+          mobCName = document.getElementById("mob-cname").value;
+          mobHealth = document.getElementById("mob-health").value;
+          mobAttack = document.getElementById("mob-attack").value;
+        }
         const command1 = `execute as @a[tag=EWplayer${player},nbt={Inventory:[{id:"minecraft:${mobName}_spawn_egg",Slot:-106b}]}] if score @s EWCoin matches 1.. at @s positioned ^ ^ ^10 if entity @e[distance=0..5,limit=1,sort=nearest,type=minecraft:armor_stand,tag=!EWstageA] run execute as @e[distance=0..5,limit=1,sort=nearest,type=minecraft:armor_stand,tag=!EWstageA] if entity @s[tag=!EWSelected] at @s run summon minecraft:${mobName} ~ ~ ~ {CustomName:'{"text":"${mobCName}","bold":"true"}',Tags:["EWMob","EWhp${mobHealth}","EWat${mobAttack}"]}`;
         document.getElementById("command-1").value = command1;
 
