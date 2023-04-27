@@ -14,24 +14,25 @@
     <input type="text" id="mob-attack" name="mob-attack" placeholder="숫자만 입력하세요."><br><br>
     <label for="mob-health">기본 체력:</label>
     <input type="text" id="mob-health" name="mob-health" placeholder="숫자만 입력하세요."><br><br>
-    <button onclick="generateCommands()">변환하기</button><br><br>
+    <button onclick="generateCommands(1)">변환하기 (EWplayer1)</button>
+    <button onclick="generateCommands(2)">변환하기 (EWplayer2)</button>    
     <label for="command-1">무조건부 커맨드 결과:</label><br>
     <textarea id="command-1" rows="5" cols="50" readonly placeholder="커맨드 결과가 표시되는곳입니다"></textarea><br><br>
     <label for="command-2">연쇄 조건부 커맨드 결과:</label><br>
     <textarea id="command-2" rows="5" cols="50" readonly placeholder="커맨드 결과가 표시되는곳입니다"></textarea><br><br>
 
     <script>
-      function generateCommands() {
+      function generateCommands(player) {
         // 1커맨드 생성
         const mobName = document.getElementById("mob-name").value;
         const mobAttack = document.getElementById("mob-attack").value;
         const mobHealth = document.getElementById("mob-health").value;
         const mobCName = document.getElementById("mob-cname").value;
-        const command1 = `execute as @a[tag=EWplayer2,nbt={Inventory:[{id:"minecraft:${mobName}_spawn_egg",Slot:-106b}]}] if score @s EWCoin matches 1.. at @s positioned ^ ^ ^10 if entity @e[distance=0..5,limit=1,sort=nearest,type=minecraft:armor_stand,tag=!EWstageA] run execute as @e[distance=0..5,limit=1,sort=nearest,type=minecraft:armor_stand,tag=!EWstageA] if entity @s[tag=!EWSelected] at @s run summon minecraft:${mobName} ~ ~ ~ {CustomName:'{"text":"${mobCName}","bold":"true"}',Tags:["EWMob","EWhp${mobHealth}","EWat${mobAttack}"]}`;
+        const command1 = `execute as @a[tag=EWplayer${player},nbt={Inventory:[{id:"minecraft:${mobName}_spawn_egg",Slot:-106b}]}] if score @s EWCoin matches 1.. at @s positioned ^ ^ ^10 if entity @e[distance=0..5,limit=1,sort=nearest,type=minecraft:armor_stand,tag=!EWstageA] run execute as @e[distance=0..5,limit=1,sort=nearest,type=minecraft:armor_stand,tag=!EWstageA] if entity @s[tag=!EWSelected] at @s run summon minecraft:${mobName} ~ ~ ~ {CustomName:'{"text":"${mobCName}","bold":"true"}',Tags:["EWMob","EWhp${mobHealth}","EWat${mobAttack}"]}`;
         document.getElementById("command-1").value = command1;
 
         // 2커맨드 생성
-        const command2 = `execute as @a[tag=EWplayer2,nbt={Inventory:[{id:"minecraft:${mobName}_spawn_egg",Slot:-106b}]}] run tag @s add EWSpawn1`;
+        const command2 = `execute as @a[tag=EWplayer${player},nbt={Inventory:[{id:"minecraft:${mobName}_spawn_egg",Slot:-106b}]}] run tag @s add EWSpawn1`;
         document.getElementById("command-2").value = command2;
       }
     </script>
